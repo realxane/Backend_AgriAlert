@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notification;
+use App\Notifications\ResetPasswordNotification;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuids;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
     public $incrementing = false;
     protected $keyType = 'string';
@@ -67,5 +70,14 @@ class User extends Authenticatable
     public function diagnosticsIa()
     {
         return $this->hasMany(DiagnosticIa::class);
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $url = rtrim(config('app.frontend_url'), '/')
+            . '/reset-password?token=' . $token
+            . '&email=' . urlencode($this->email);
+
+        $this->notify(new ResetPasswordNotification($url));
     }
 }
