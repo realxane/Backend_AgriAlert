@@ -19,4 +19,9 @@ class Region extends Model
     {
         return $this->hasMany(HistoriqueMeteo::class);
     }
+
+    public function champs(): HasMany
+    {
+        return $this->hasMany(Champ::class);
+    }
 }

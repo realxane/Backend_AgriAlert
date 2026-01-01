@@ -16,31 +16,35 @@ class ResetPasswordController extends Controller
         $request->validate([
             'token' => ['required'],
             'email' => ['required', 'email'],
-            'password' => ['required', 'confirmed', 'min:8'],
+            'motdepasse' => ['required', 'confirmed', 'min:8'],
+            // confirmed => attend motdepasse_confirmation
         ]);
 
+        $credentials = [
+            'email' => $request->email,
+            'token' => $request->token,
+            'password' => $request->motdepasse,
+            'password_confirmation' => $request->motdepasse_confirmation,
+        ];
+
         $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
+            $credentials,
             function ($user, $password) {
                 $user->forceFill([
-                    'password' => Hash::make($password),
-                    'remember_token' => Str::random(60),
-                ])->save();
+                    'motdepasse' => $password,
+                ]);
+
+                $user->setRememberToken(Str::random(60));
+                $user->save();
 
                 event(new PasswordReset($user));
-
             }
         );
 
         if ($status !== Password::PASSWORD_RESET) {
-            return response()->json([
-                'message' => __($status),
-            ], 422);
+            return response()->json(['message' => __($status)], 422);
         }
 
-        return response()->json([
-            'message' => 'Mot de passe réinitialisé avec succès.',
-            // 'token' => $plainTextToken ?? null,
-        ]);
+        return response()->json(['message' => 'Mot de passe réinitialisé avec succès.']);
     }
 }
