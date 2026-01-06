@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('activite_agricoles', function (Blueprint $table) {
@@ -15,14 +14,16 @@ return new class extends Migration
                 ->constrained('users')
                 ->cascadeOnDelete();
 
-            $table->foreignUuid('champ_id')
-                ->constrained('champs')
+            $table->foreignUuid('plantation_id')
+                ->constrained('plantations')
                 ->cascadeOnDelete();
 
             $table->string('type'); // 'Semis' | 'Recolte' | 'Traitement'
+            $table->dateTime('done_at')->nullable(); // date/heure activité
+
             $table->timestamps();
 
-            $table->index(['champ_id', 'type']);
+            $table->index(['plantation_id', 'type']);
         });
     }
 

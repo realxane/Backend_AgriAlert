@@ -23,6 +23,7 @@ class ResetPasswordNotification extends Notification
             ->subject('Réinitialisation de mot de passe')
             ->line('Tu as demandé une réinitialisation de mot de passe.')
             ->action('Réinitialiser mon mot de passe', $this->url)
-            ->line('Si tu n’as pas demandé ça, ignore cet email.');
+            ->line('Si tu n’as pas demandé ça, ignore cet email.')
+            ->salutation("Cordialement,\nAgriAlert");
     }
 }

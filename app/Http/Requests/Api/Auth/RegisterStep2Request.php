@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\Auth;
 
+use App\Enums\ActiviteType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RegisterStep2Request extends FormRequest
 {
@@ -11,44 +13,37 @@ class RegisterStep2Request extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'nom' => is_string($this->nom) ? trim($this->nom) : $this->nom,
-        ]);
-    }
-
     public function rules(): array
     {
         return [
-            'registration_session_id' => ['required', 'string'],
+            'registration_session_id' => ['required', 'uuid'],
 
+            // Champ
             'nom' => ['required', 'string', 'max:255'],
-
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-
             'aire' => ['nullable', 'numeric', 'min:0'],
+            'region_id' => ['required', 'uuid', 'exists:regions,id'],
+
+            // ✅ Plusieurs cultures => plusieurs plantations
+            'plantations' => ['required', 'array', 'min:1'],
+            'plantations.*.culture_id' => ['required', 'uuid', 'exists:cultures,id'],
+            'plantations.*.date_debut' => ['nullable', 'date'],
+
+            // ✅ Activités initiales (optionnel)
+            'plantations.*.activities' => ['nullable', 'array'],
+            'plantations.*.activities.*.type' => ['required', Rule::enum(ActiviteType::class)],
+            'plantations.*.activities.*.done_at' => ['nullable', 'date'],
         ];
     }
 
-    public function messages(): array
+    protected function prepareForValidation(): void
     {
-        return [
-            'nom.required' => 'Le nom du champ est obligatoire.',
-            'latitude.between' => 'La latitude doit être entre -90 et 90.',
-            'longitude.between' => 'La longitude doit être entre -180 et 180.',
-            'aire.min' => "L'aire doit être supérieure ou égale à 0.",
-        ];
-    }
-
-    public function attributes(): array
-    {
-        return [
-            'nom' => 'nom du champ',
-            'aire' => 'aire',
-            'latitude' => 'latitude',
-            'longitude' => 'longitude',
-        ];
+        // Optionnel: éviter doublons si l’utilisateur sélectionne 2x la même culture
+        if (is_array($this->plantations)) {
+            $this->merge([
+                'plantations' => array_values($this->plantations),
+            ]);
+        }
     }
 }

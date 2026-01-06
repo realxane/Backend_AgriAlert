@@ -18,14 +18,26 @@ class Recommandation extends Model
     protected $fillable = [
         'titre',
         'contenu',
-        'saison'
+        'saison',
+        'region_id',
+        'culture_id',
+        'activite_type',
+        'min_jour',
+        'max_jour',
+        'weather_rules',
+        'priorite',
     ];
 
     protected $casts = [
         'titre' => 'string',
         'contenu' => 'string',
         'saison' => Saison::class,
+        'min_jour' => 'integer',
+        'max_jour' => 'integer',
+        'weather_rules' => 'array',
+        'priorite' => 'integer',
     ];
+
 
     public function region(): BelongsTo
     {
