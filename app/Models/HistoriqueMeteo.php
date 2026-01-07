@@ -35,4 +35,9 @@ class HistoriqueMeteo extends Model
     {
         return $this->belongsTo(Region::class);
     }
+
+    public function champ(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Champ::class);
+    }
 }

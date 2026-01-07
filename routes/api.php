@@ -9,6 +9,9 @@ use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\RecommendationController;
 use App\Http\Controllers\Api\RegionController;
+use App\Http\Controllers\Api\WeatherController;
+use App\Http\Controllers\Api\WeatherHistoryController;
+use App\Http\Controllers\Api\IA\DiagnosticController;
 
 Route::prefix('auth')->group(function () {
     // Agriculteur : inscription en 2 étapes
@@ -29,4 +32,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/recommendations/cultures/{culture}', [RecommendationController::class, 'byCulture']);
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/weather/today', [WeatherController::class, 'today']);       // ?champ_id=...
+    Route::get('/weather/forecast', [WeatherController::class, 'forecast']); // ?champ_id=...&days=7
+    // Route::post('/scan', [DiagnosticController::class, 'detect']);
+});
+
 Route::post('/regions', [RegionController::class, 'store']);
+
+Route::middleware('auth:sanctum')->get('/weather/history', [WeatherHistoryController::class, 'index']);
