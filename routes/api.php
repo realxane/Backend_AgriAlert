@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Auth\RegisterAgriculteurStep1Controller;
 use App\Http\Controllers\Api\Auth\RegisterAgriculteurStep2Controller;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
+use App\Http\Controllers\Api\IA\ChatBotController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -36,7 +37,10 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     Route::get('/export/excel', [AdminDashboardController::class, 'exportExcel']);
 
 });
-
+Route::middleware('auth:sanctum')->prefix('ia')->group(function () {
+    Route::post('/chatbot', [\App\Http\Controllers\Api\IA\ChatBotController::class, 'ask']);
+    Route::post('/diagnostic', [\App\Http\Controllers\Api\IA\DiagnosticController::class, 'detect']);
+});
 
 Route::prefix('auth')->group(function () {
     // Agriculteur : inscription en 2 étapes
@@ -52,4 +56,3 @@ Route::prefix('auth')->group(function () {
     Route::post('forgot-password', ForgotPasswordController::class);
     Route::post('reset-password', ResetPasswordController::class);
 });
-

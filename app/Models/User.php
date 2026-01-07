@@ -27,6 +27,7 @@ class User extends Authenticatable
         'motdepasse',
         'role',
         'is_active',
+        'fcm_token', 
     ];
 
     protected $hidden = [
