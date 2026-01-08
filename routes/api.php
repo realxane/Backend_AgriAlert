@@ -67,5 +67,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/weather/history', [WeatherHistoryController::class, 'index']);  
 });
 
-Route::post('/regions', [RegionController::class, 'store']);
+
 
