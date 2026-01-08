@@ -17,6 +17,4 @@ enum NomCulture: string
     case Raisin = 'Raisin';
     case Papaye = 'Papaye';
     case Pomme = 'Pomme';
-    
-
 }

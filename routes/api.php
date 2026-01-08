@@ -69,4 +69,3 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::post('/regions', [RegionController::class, 'store']);
 
-
