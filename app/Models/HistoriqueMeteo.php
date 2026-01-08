@@ -21,6 +21,7 @@ class HistoriqueMeteo extends Model
         'precipitation',
         'humidite',
         'source',
+        'champ_id'
     ];
 
     protected $casts = [
@@ -34,5 +35,10 @@ class HistoriqueMeteo extends Model
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class);
+    }
+
+    public function champ(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\Champ::class);
     }
 }

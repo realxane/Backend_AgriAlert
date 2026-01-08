@@ -12,15 +12,17 @@ use App\Http\Controllers\Api\Auth\RegisterAgriculteurStep1Controller;
 use App\Http\Controllers\Api\Auth\RegisterAgriculteurStep2Controller;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
+
 use App\Http\Controllers\Api\IA\ChatBotController;
+use App\Http\Controllers\Api\RecommendationController;
+use App\Http\Controllers\Api\RegionController;
+use App\Http\Controllers\Api\WeatherController;
+use App\Http\Controllers\Api\WeatherHistoryController;
+use App\Http\Controllers\Api\IA\DiagnosticController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
-
-//-----------------login(NB:A effacer avant de prendre les modification de Alassane -------------------------
-//Route::post('/login', [\App\Http\Controllers\AuthController::class, 'login']);
-//-------------------fin login---------------------
 
 Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
     // La gestion des utilisateurs
@@ -38,21 +40,33 @@ Route::middleware('auth:sanctum')->prefix('admin')->group(function () {
 
 });
 Route::middleware('auth:sanctum')->prefix('ia')->group(function () {
-    Route::post('/chatbot', [\App\Http\Controllers\Api\IA\ChatBotController::class, 'ask']);
-    Route::post('/diagnostic', [\App\Http\Controllers\Api\IA\DiagnosticController::class, 'detect']);
+    Route::post('/chatbot', [ChatBotController::class, 'ask']);
+    Route::post('/diagnostic', [DiagnosticController::class, 'detect']);
 });
+
 
 Route::prefix('auth')->group(function () {
     // Agriculteur : inscription en 2 étapes
     Route::post('register/agriculteur/step1', RegisterAgriculteurStep1Controller::class);
     Route::post('register/agriculteur/step2', RegisterAgriculteurStep2Controller::class);
-
     // Connexion (agriculteur + admin)
     Route::post('login', LoginController::class);
-
     // Déconnexion
     Route::middleware('auth:sanctum')->post('logout', LogoutController::class);
 
     Route::post('forgot-password', ForgotPasswordController::class);
     Route::post('reset-password', ResetPasswordController::class);
 });
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Recommandations
+    Route::get('/recommendations/cultures/{culture}', [RecommendationController::class, 'byCulture']);
+    // Météo
+    Route::get('/weather/today', [WeatherController::class, 'today']);
+    Route::get('/weather/forecast', [WeatherController::class, 'forecast']);
+    Route::get('/weather/history', [WeatherHistoryController::class, 'index']);  
+});
+
+Route::post('/regions', [RegionController::class, 'store']);
+
+

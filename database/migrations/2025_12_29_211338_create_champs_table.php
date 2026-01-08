@@ -10,16 +10,20 @@ return new class extends Migration
     {
         Schema::create('champs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-
-            $table->foreignUuid('user_id')
-                ->constrained('users')
-                ->cascadeOnDelete();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
 
             $table->string('nom');
-            $table->double('latitude');
-            $table->double('longitude');
-            $table->double('aire'); 
+            $table->double('latitude')->nullable();
+            $table->double('longitude')->nullable();
+            $table->double('aire')->nullable();
+
+            $table->foreignUuid('region_id')
+                ->nullable()
+                ->constrained('regions')
+                ->nullOnDelete();
+
             $table->timestamps();
+
         });
     }
 

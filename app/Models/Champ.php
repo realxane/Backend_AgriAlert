@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Champ extends Model
 {
@@ -19,6 +22,7 @@ class Champ extends Model
         'latitude',
         'longitude',
         'aire',
+        'region_id',
     ];
 
     protected $casts = [
@@ -32,8 +36,25 @@ class Champ extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function activitesAgricoles()
+    public function plantations(): HasMany
     {
-        return $this->hasMany(ActiviteAgricole::class);
+        return $this->hasMany(Plantation::class);
+    }
+
+    public function region(): BelongsTo
+    {
+        return $this->belongsTo(Region::class);
+    }
+
+    public function cultures(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            Culture::class,
+            Plantation::class,
+            'champ_id',   // FK sur plantations...
+            'id',         // FK sur cultures...
+            'id',         // PK sur champs...
+            'culture_id'  // FK sur plantations vers cultures...
+        );
     }
 }
