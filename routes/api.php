@@ -29,15 +29,14 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/recommendations/cultures/{culture}', [RecommendationController::class, 'byCulture']);
+    Route::get('/recommendations/cultures/{culture}', [RecommendationController::class, 'byCulture']);    // ?champ_id=...
 });
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/weather/today', [WeatherController::class, 'today']);       // ?champ_id=...
     Route::get('/weather/forecast', [WeatherController::class, 'forecast']); // ?champ_id=...&days=7
+    Route::get('/weather/history', [WeatherHistoryController::class, 'index']);
     // Route::post('/scan', [DiagnosticController::class, 'detect']);
 });
 
 Route::post('/regions', [RegionController::class, 'store']);
-
-Route::middleware('auth:sanctum')->get('/weather/history', [WeatherHistoryController::class, 'index']);

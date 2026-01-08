@@ -26,7 +26,10 @@ class RecommandationEngine
             ->first();
 
         // 2) Calculer le nombre de jours depuis le début de la plantation
-        $jours = $plantation ? now()->diffInDays($plantation->date_debut) : null;
+        $jours = $plantation
+        ? max(0, $plantation->date_debut->startOfDay()->diffInDays(now()->startOfDay()))
+        : null;
+
 
         // 3) Récupérer la dernière activité agricole (Semis / Traitement / Recolte)
         $activite = $plantation?->activitesAgricoles()
