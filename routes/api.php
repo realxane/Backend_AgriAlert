@@ -78,7 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/me/password', [ProfileController::class, 'updatePassword']);
     Route::post('/me/photo', [ProfileController::class, 'updatePhoto']); 
 
-    // Champ (un user peut en avoir 1 ou plusieurs)
+    // Champ 
     Route::get('/champs', [ChampController::class, 'index']);
     Route::get('/champs/{champ}', [ChampController::class, 'show']);
     Route::put('/champs/{champ}', [ChampController::class, 'update']);
@@ -88,7 +88,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/plantations/{plantation}', [PlantationController::class, 'update']);      // modifier dates
     Route::delete('/plantations/{plantation}', [PlantationController::class, 'destroy']);  // supprimer culture
 
-    // Activités agricoles (Semis / Récolte / Traitement)
+    // Activités agricoles (Semis / Récolte / Traitement) 
     Route::post('/plantations/{plantation}/activites', [ActiviteAgricoleController::class, 'store']);
     Route::get('/plantations/{plantation}/activites', [ActiviteAgricoleController::class, 'index']);
 });
