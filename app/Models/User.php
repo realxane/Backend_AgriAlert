@@ -27,6 +27,7 @@ class User extends Authenticatable
         'motdepasse',
         'role',
         'is_active',
+        'photo_path',
         'fcm_token', 
     ];
 
@@ -59,6 +60,14 @@ class User extends Authenticatable
 
         $this->attributes['motdepasse'] = $looksHashed ? $value : Hash::make($value);
     }
+
+    protected $appends = ['photo_url'];
+
+    public function getPhotoUrlAttribute(): ?string
+    {
+        return $this->photo_path ? asset('storage/'.$this->photo_path) : null;
+    }
+
 
     public function champs()
     {
