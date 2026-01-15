@@ -16,10 +16,13 @@ use App\Http\Controllers\Api\Auth\SocialAuthController;
 
 use App\Http\Controllers\Api\IA\ChatBotController;
 use App\Http\Controllers\Api\RecommendationController;
-use App\Http\Controllers\Api\RegionController;
 use App\Http\Controllers\Api\WeatherController;
 use App\Http\Controllers\Api\WeatherHistoryController;
 use App\Http\Controllers\Api\IA\DiagnosticController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ChampController;
+use App\Http\Controllers\Api\PlantationController;
+use App\Http\Controllers\Api\ActiviteAgricoleController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -68,6 +71,29 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/weather/today', [WeatherController::class, 'today']);
     Route::get('/weather/forecast', [WeatherController::class, 'forecast']);
     Route::get('/weather/history', [WeatherHistoryController::class, 'index']);  
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+
+    // Profil utilisateur
+    Route::get('/me', [ProfileController::class, 'show']);
+    Route::put('/me', [ProfileController::class, 'update']);
+    Route::put('/me/password', [ProfileController::class, 'updatePassword']);
+    Route::post('/me/photo', [ProfileController::class, 'updatePhoto']); 
+
+    // Champ 
+    Route::get('/champs', [ChampController::class, 'index']);
+    Route::get('/champs/{champ}', [ChampController::class, 'show']);
+    Route::put('/champs/{champ}', [ChampController::class, 'update']);
+
+    // Plantations (cultures associées à un champ)
+    Route::post('/champs/{champ}/plantations', [PlantationController::class, 'store']);     // ajouter culture
+    Route::put('/plantations/{plantation}', [PlantationController::class, 'update']);      // modifier dates
+    Route::delete('/plantations/{plantation}', [PlantationController::class, 'destroy']);  // supprimer culture
+
+    // Activités agricoles (Semis / Récolte / Traitement) 
+    Route::post('/plantations/{plantation}/activites', [ActiviteAgricoleController::class, 'store']);
+    Route::get('/plantations/{plantation}/activites', [ActiviteAgricoleController::class, 'index']);
 });
 
 
