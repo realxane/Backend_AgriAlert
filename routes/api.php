@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Auth\RegisterAgriculteurStep1Controller;
 use App\Http\Controllers\Api\Auth\RegisterAgriculteurStep2Controller;
 use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
+use App\Http\Controllers\Api\Auth\SocialAuthController;
 
 use App\Http\Controllers\Api\IA\ChatBotController;
 use App\Http\Controllers\Api\RecommendationController;
@@ -51,6 +52,8 @@ Route::prefix('auth')->group(function () {
     Route::post('register/agriculteur/step2', RegisterAgriculteurStep2Controller::class);
     // Connexion (agriculteur + admin)
     Route::post('login', LoginController::class);
+    //connexion via les réseaux sociaux
+    Route::post('/{provider}/callback', [SocialAuthController::class, 'handleSocialLogin'])->where('provider', 'google|facebook');
     // Déconnexion
     Route::middleware('auth:sanctum')->post('logout', LogoutController::class);
 
