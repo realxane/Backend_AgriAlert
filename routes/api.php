@@ -24,6 +24,8 @@ use App\Http\Controllers\Api\ChampController;
 use App\Http\Controllers\Api\PlantationController;
 use App\Http\Controllers\Api\ActiviteAgricoleController;
 
+use App\Http\Controllers\Api\RegionController;
+
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
@@ -95,6 +97,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/plantations/{plantation}/activites', [ActiviteAgricoleController::class, 'store']);
     Route::get('/plantations/{plantation}/activites', [ActiviteAgricoleController::class, 'index']);
 });
+
+
+Route::get('/regions', [RegionController::class, 'index']);
 
 
 

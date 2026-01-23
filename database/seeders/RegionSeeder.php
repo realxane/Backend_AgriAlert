@@ -18,7 +18,7 @@ class RegionSeeder extends Seeder
         ];
 
         foreach ($regions as $name) {
-            Region::create([
+            Region::firstOrCreate([
                 'id' => (string) Str::uuid(),
                 'name' => $name,
             ]);
