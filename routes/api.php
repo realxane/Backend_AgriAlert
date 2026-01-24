@@ -25,6 +25,7 @@ use App\Http\Controllers\Api\PlantationController;
 use App\Http\Controllers\Api\ActiviteAgricoleController;
 
 use App\Http\Controllers\Api\RegionController;
+use App\Http\Controllers\Api\CultureController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -101,5 +102,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::get('/regions', [RegionController::class, 'index']);
 
+Route::get('/cultures', [CultureController::class, 'index']);
 
 
