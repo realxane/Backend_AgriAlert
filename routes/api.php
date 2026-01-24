@@ -52,6 +52,7 @@ Route::middleware('auth:sanctum')->prefix('ia')->group(function () {
 });
 
 
+
 Route::prefix('auth')->group(function () {
     // Agriculteur : inscription en 2 étapes
     Route::post('register/agriculteur/step1', RegisterAgriculteurStep1Controller::class);

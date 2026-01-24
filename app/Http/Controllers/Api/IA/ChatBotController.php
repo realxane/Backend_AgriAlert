@@ -63,7 +63,7 @@ class ChatBotController extends Controller
                 'reponse' => $reponseIA,
             ]);
 
-            return response()->json(['Reponse' => $reponseIA]);
+            return response()->json(['Reponse' => $reponseIA], 200, ['Content-Type' => 'application/json; charset=UTF-8'], JSON_UNESCAPED_UNICODE);
         }
 
         return response()->json(['error' => 'Échec'], 500);
