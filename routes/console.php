@@ -9,6 +9,7 @@ Artisan::command('inspire', function () {
 
 })->purpose('Display an inspiring quote');
 
-Schedule::command('weather:check')->hourly();
+//Schedule::command('weather:check')->hourly();
+Schedule::command('weather:check')->everyMinute();
 
 Schedule::command('weather:capture')->everyMinute(); //pour tester lancer la commande(dans un autre terminal,le server doit tourner) php artisan schedule:work

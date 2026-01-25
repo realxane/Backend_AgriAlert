@@ -17,13 +17,22 @@ class NotificationServiceAlert
         $this->messaging = $factory->createMessaging();
     }
 
+    // Dans NotificationServiceAlert.php
     public function sendPush($token, $title, $body)
     {
         if (empty($token)) return;
 
-        $notification = Notification::create($title, $body);
+        // Création du message avec priorité haute
         $message = CloudMessage::withTarget('token', $token)
-            ->withNotification($notification);
+            ->withNotification(Notification::create($title, $body))
+            ->withAndroidConfig([
+                'priority' => 'high',
+                'notification' => [
+                    'channel_id' => 'high_importance_channel', // DOIT CORRESPONDRE À FLUTTER
+                    'icon' => 'stock_ticker_update',
+                    'color' => '#f45342'
+                ],
+            ]);
 
         try {
             $this->messaging->send($message);

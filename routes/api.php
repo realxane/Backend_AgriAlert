@@ -23,9 +23,29 @@ use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ChampController;
 use App\Http\Controllers\Api\PlantationController;
 use App\Http\Controllers\Api\ActiviteAgricoleController;
+use App\Http\Controllers\Api\NotificationController;
 
 use App\Http\Controllers\Api\RegionController;
 use App\Http\Controllers\Api\CultureController;
+
+
+Route::middleware('auth:sanctum')->prefix('notifications')->group(function () {
+    Route::get('/', [NotificationController::class, 'index']);
+    Route::delete('/all', [NotificationController::class, 'deleteAll']);
+    Route::delete('/{id}', [NotificationController::class, 'destroy']);
+});
+
+Route::middleware('auth:sanctum')->post('/update-fcm-token', function (Request $request) {
+    $request->validate([
+        'fcm_token' => 'required|string',
+    ]);
+
+    $request->user()->update([
+        'fcm_token' => $request->fcm_token
+    ]);
+
+    return response()->json(['message' => 'Token FCM mis à jour avec succès']);
+});
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -50,7 +70,6 @@ Route::middleware('auth:sanctum')->prefix('ia')->group(function () {
     Route::post('/chatbot', [ChatBotController::class, 'ask']);
     Route::post('/diagnostic', [DiagnosticController::class, 'detect']);
 });
-
 
 
 Route::prefix('auth')->group(function () {
