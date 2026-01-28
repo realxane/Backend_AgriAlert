@@ -27,6 +27,16 @@ use App\Http\Controllers\Api\NotificationController;
 
 use App\Http\Controllers\Api\RegionController;
 use App\Http\Controllers\Api\CultureController;
+use App\Http\Controllers\Api\MetaDataController;
+
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/profile/me', [ProfileController::class, 'show']);
+    Route::post('/profile/update', [ProfileController::class, 'update']);
+    Route::get('/metadata/settings', [MetaDataController::class, 'getSettingsData']);
+    Route::post('/profile/update-champ', [ProfileController::class, 'updateChamp']);
+});
 
 
 Route::middleware('auth:sanctum')->prefix('notifications')->group(function () {

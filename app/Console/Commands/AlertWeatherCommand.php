@@ -52,11 +52,11 @@ class AlertWeatherCommand extends Command
                     $icon = "assets/images/notification_default.png";
 
                     // --- LOGIQUE DES SEUILS ---
-                    if ($temp > 40) { 
+                    if ($temp < 40) { 
                         $alertTitle = "🌡️ Température extrême";
                         $alertBody = "Bonjour {$champ->user->nom}, Il fait {$temp}°C sur votre champ '{$champ->nom}'. Pensez à irriguer.";
                         $icon = "assets/images/chaleur.png";
-                    } elseif ($rain < 10 || $weatherMain == 'Thunderstorm') {
+                    } elseif ($rain > 10 || $weatherMain == 'Thunderstorm') {
                         $alertTitle = "🌊 Risque d'Inondation";
                         $alertBody = "Bonjour {$champ->user->nom}, Grosses pluies détectées sur '{$champ->nom}'. Surveillez les drains.";
                         $icon = "assets/images/nuage.png";
