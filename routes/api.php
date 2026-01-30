@@ -24,7 +24,7 @@ use App\Http\Controllers\Api\ChampController;
 use App\Http\Controllers\Api\PlantationController;
 use App\Http\Controllers\Api\ActiviteAgricoleController;
 use App\Http\Controllers\Api\NotificationController;
-
+use App\Http\Controllers\Api\DiagnosticHistoryController;
 use App\Http\Controllers\Api\RegionController;
 use App\Http\Controllers\Api\CultureController;
 use App\Http\Controllers\Api\MetaDataController;
@@ -134,4 +134,6 @@ Route::get('/regions', [RegionController::class, 'index']);
 
 Route::get('/cultures', [CultureController::class, 'index']);
 
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/diagnostics', [DiagnosticHistoryController::class, 'index']);
+});
