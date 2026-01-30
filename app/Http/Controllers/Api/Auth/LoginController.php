@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -21,17 +22,31 @@ class LoginController extends Controller
             ->orWhere('telephone', $login)
             ->first();
 
+        // 1. Vérification de l'existence et du mot de passe
         if (!$user || !Hash::check($data['motdepasse'], $user->motdepasse)) {
             return response()->json(['message' => 'Identifiants incorrects.'], 422);
         }
 
+        // 2. SÉCURITÉ : Vérification du rôle si c'est une connexion Admin
+        // On vérifie si un flag 'source' est envoyé par React
+        if ($request->filled('source') && $request->input('source') === 'admin_dashboard') {
+            if ($user->role->value !== 'Admin') {
+                return response()->json([
+                    'message' => "Accès réservé aux administrateurs."
+                ], 403);
+            }
+        }
+
+        // 3. Vérification si le compte est actif
         if (!$user->is_active) {
             return response()->json([
-                'message' => "Compte non activé. Finalisez l'inscription (étape champ) ou contactez l'admin.",
+                'message' => "Compte non activé. Contactez l'administrateur.",
             ], 403);
         }
 
-        $token = $user->createToken('mobile')->plainTextToken;
+        // 4. Création du token (le nom change selon la source)
+        $tokenName = ($request->input('source') === 'admin_dashboard') ? 'admin_token' : 'mobile_token';
+        $token = $user->createToken($tokenName)->plainTextToken;
 
         return response()->json([
             'message' => 'Connexion réussie.',
