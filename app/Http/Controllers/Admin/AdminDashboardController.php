@@ -21,7 +21,10 @@ class AdminDashboardController extends Controller
     {
         return response()->json([
             'total_users' => User::count(),
-            'surface_totale' => Champ::sum('aire')
+            'surface_totale' => Champ::sum('aire'),
+            'notification_total' => DB::table('notifications')->count(),
+            'diagnostics_ia_total' => DB::table('diagnostics_ia')->where('maladie_detectee', 'NOT LIKE', '%_Healthy')->count(),
+        
         ]);
     }
 
@@ -32,23 +35,30 @@ class AdminDashboardController extends Controller
             Champ::select('id', 'nom', 'latitude', 'longitude', 'aire')->get()
         );
     }
-    //  Analyser les données des champs avec des filtres
-    public function analyserData(Request $request)
-    {
-        $query = Champ::query();
-        // Filtre par région si présent dans la requête
-        if ($request->has('region_id')) {
-            $query->where('region_id', $request->region_id);
-        }
-        // Filtre par date si présent
-        if ($request->has('date_debut')) {
-            $query->where('created_at', '>=', $request->date_debut);
-        }
-        return response()->json([
-            'surface_filtree' => $query->sum('aire'),
-            'details' => $query->with('user')->get()
-        ]);
+    //  Analyser les données des champs avec des filtres-region
+   public function analyserData(Request $request)
+{
+    $regionId = $request->input('region_id');
+    if (!$regionId) {
+        return response()->json(['error' => 'Le paramètre region_id est obligatoire'], 400);
     }
+
+    return response()->json([
+        'total_users' => User::whereHas('champs', function ($query) use ($regionId) {
+            $query->where('region_id', $regionId);
+        })->count(),
+        'surface_totale' => Champ::where('region_id', $regionId)->sum('aire'),
+        'notification_total' => DB::table('notifications')
+            ->whereIn('user_id', function ($query) use ($regionId) {
+                $query->select('user_id')->from('champs')->where('region_id', $regionId);
+            })->count(),
+        'diagnostics_ia_total' => DB::table('diagnostics_ia')
+            ->where('maladie_detectee', 'NOT LIKE', '%_Healthy')
+            ->whereIn('user_id', function ($query) use ($regionId) {
+                $query->select('user_id')->from('champs')->where('region_id', $regionId);
+            })->count(),
+    ]);
+}
     // Exporter les données des utilisateurs et leurs champs en PDF
     public function exportPDF()
     {
