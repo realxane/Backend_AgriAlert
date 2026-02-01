@@ -44,6 +44,9 @@ class AdminUserController extends Controller
         $user->is_active = !$user->is_active;
         $user->save();
 
+        if (!$user->is_active) {  
+        $user->tokens()->delete(); 
+        }
         return response()->json([
             'message' => $user->is_active ? 'Utilisateur activé' : 'Utilisateur bloqué'
         ]);
