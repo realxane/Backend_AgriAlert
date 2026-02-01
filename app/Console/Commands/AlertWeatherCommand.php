@@ -22,6 +22,7 @@ class AlertWeatherCommand extends Command
             ->whereHas('user', function($query) {
                 $query->whereNotNull('fcm_token');
             })->get();
+        
 
         if ($champs->isEmpty()) {
             $this->info("Aucun champ avec utilisateur notifiable trouvé.");
@@ -35,7 +36,7 @@ class AlertWeatherCommand extends Command
                 $response = Http::get("https://api.openweathermap.org/data/2.5/weather", [
                     'lat'   => $champ->latitude,
                     'lon'   => $champ->longitude,
-                    'appid' => env('OPENWEATHER_API_KEY'),
+                    'appid' => env('OPENWEATHER_KEY'),
                     'units' => 'metric',
                     'lang'  => 'fr'
                 ]);
@@ -66,6 +67,8 @@ class AlertWeatherCommand extends Command
                         $icon = "assets/images/insecte.png";
                     }
 
+                    $this->info("Analyse météo pour : {$alertTitle}");
+
                     // --- ENVOI SI ALERTE GÉNÉRÉE ---
                     if ($alertTitle != "") {
                         
@@ -95,6 +98,9 @@ class AlertWeatherCommand extends Command
                         }
                     }
 
+                } else{
+                    $this->info("Échec de la requête météo pour {$champ->nom}");
+                    
                 }
             } catch (\Exception $e) {
                 $this->error("Erreur pour {$champ->nom} : " . $e->getMessage());

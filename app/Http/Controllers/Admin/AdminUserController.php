@@ -5,15 +5,19 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Enums\Role; 
 
 class AdminUserController extends Controller
 {
-    // 1-Liste des utilisateurs
+    // 1-Liste des utilisateurs ( uniquement agriculteurs)
     public function index()
     {
-        return response()->json(
-            User::withSum('champs', 'aire')->get()
-        );
+        $users = User::query()
+            ->where('role', Role::Agriculteur) //  filtre agriculteurs
+            ->withSum('champs', 'aire')
+            ->get();
+
+        return response()->json($users);
     }
 
     // 2-Modifier utilisateur
