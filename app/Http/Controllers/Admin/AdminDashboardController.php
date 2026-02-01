@@ -29,12 +29,20 @@ class AdminDashboardController extends Controller
     }
 
     //  Données carte (champs)
-    public function mapData()
+    public function mapData(Request $request)
     {
-        return response()->json(
-            Champ::select('id', 'nom', 'latitude', 'longitude', 'aire')->get()
-        );
+        $regionId = $request->query('region_id'); //  query string
+
+        $q = Champ::query()
+            ->select('id', 'nom', 'latitude', 'longitude', 'aire', 'region_id');
+
+        if ($regionId) {
+            $q->where('region_id', $regionId);
+        }
+
+        return response()->json($q->get());
     }
+
     //  Analyser les données des champs avec des filtres-region
    public function analyserData(Request $request)
 {
