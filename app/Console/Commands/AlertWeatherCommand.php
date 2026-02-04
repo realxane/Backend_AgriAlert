@@ -53,19 +53,63 @@ class AlertWeatherCommand extends Command
                     $icon = "assets/images/notification_default.png";
 
                     // --- LOGIQUE DES SEUILS ---
-                    if ($temp < 40) { 
-                        $alertTitle = "🌡️ Température extrême";
-                        $alertBody = "Bonjour {$champ->user->nom}, Il fait {$temp}°C sur votre champ '{$champ->nom}'. Pensez à irriguer.";
-                        $icon = "assets/images/chaleur.png";
-                    } elseif ($rain > 10 || $weatherMain == 'Thunderstorm') {
+                    // if ($temp < 40) { 
+                    //     $alertTitle = "🌡️ Température extrême";
+                    //     $alertBody = "Bonjour {$champ->user->nom}, Il fait {$temp}°C sur votre champ '{$champ->nom}'. Pensez à irriguer.";
+                    //     $icon = "assets/images/chaleur.png";
+                    // } elseif ($rain > 10 || $weatherMain == 'Thunderstorm') {
+                    //     $alertTitle = "🌊 Risque d'Inondation";
+                    //     $alertBody = "Bonjour {$champ->user->nom}, Grosses pluies détectées sur '{$champ->nom}'. Surveillez les drains.";
+                    //     $icon = "assets/images/nuage.png";
+                    // } elseif ($humidity > 85 && $temp > 22) {
+                    //     $alertTitle = "🐛 Risque de Maladie";
+                    //     $alertBody = "Bonjour {$champ->user->nom}, Conditions favorables au mildiou sur '{$champ->nom}'.";
+                    //     $icon = "assets/images/insecte.png";
+                    // }
+
+
+                        // 🌊 INONDATION
+                    if ($rain >= 20 || $weatherMain === 'Thunderstorm') {
                         $alertTitle = "🌊 Risque d'Inondation";
-                        $alertBody = "Bonjour {$champ->user->nom}, Grosses pluies détectées sur '{$champ->nom}'. Surveillez les drains.";
-                        $icon = "assets/images/nuage.png";
-                    } elseif ($humidity > 85 && $temp > 22) {
-                        $alertTitle = "🐛 Risque de Maladie";
-                        $alertBody = "Bonjour {$champ->user->nom}, Conditions favorables au mildiou sur '{$champ->nom}'.";
-                        $icon = "assets/images/insecte.png";
+                        $alertBody  = "Bonjour {$champ->user->nom},Fortes pluies sur '{$champ->nom}'. Risque d'inondation. Surveillez les canaux.";
+                        $icon       = "assets/images/inondation.webp";
                     }
+
+                    // ⚡ ORAGE VIOLENT
+                    elseif ($weatherMain === 'Thunderstorm' && $wind > 15) {
+                        $alertTitle = "⚡ Orage violent";
+                        $alertBody  = "Bonjour {$champ->user->nom},Orage violent détecté sur '{$champ->nom}'. Protégez vos installations.";
+                        $icon       = "assets/images/orage.webp";
+                    }
+
+                    // 🌡️ CANICULE
+                    elseif ($temp <= 40) {
+                        $alertTitle = "🌡️ Canicule";
+                        $alertBody  = "Bonjour {$champ->user->nom},Température extrême ({$temp}°C) sur '{$champ->nom}'. Irrigation urgente.";
+                        $icon       = "assets/images/chaleur.png";
+                    }
+
+                    // ❄️ FROID EXTRÊME
+                    elseif ($temp <= 10) {
+                        $alertTitle = "❄️ Froid intense";
+                        $alertBody  = "Bonjour {$champ->user->nom},Température basse ({$temp}°C) sur '{$champ->nom}'. Risque pour les cultures.";
+                        $icon       = "assets/images/froid.png";
+                    }
+
+                    // 🐛 MALADIES (champignons / mildiou)
+                    elseif ($humidity >= 85 && $temp >= 22 && $temp <= 32) {
+                        $alertTitle = "🐛 Risque de Maladie";
+                        $alertBody  = "Bonjour {$champ->user->nom},Humidité élevée ({$humidity}%) favorable aux maladies sur '{$champ->nom}'.";
+                        $icon       = "assets/images/maladie.png";
+                    }
+
+                    // 💧 SÉCHERESSE
+                    elseif ($humidity <= 30 && $rain == 0 && $temp >= 35) {
+                        $alertTitle = "💧 Stress hydrique";
+                        $alertBody  = "Bonjour {$champ->user->nom},Sécheresse détectée sur '{$champ->nom}'. Pensez à irriguer.";
+                        $icon       = "assets/images/secheresse.png";
+                    }
+
 
                     $this->info("Analyse météo pour : {$alertTitle}");
 
